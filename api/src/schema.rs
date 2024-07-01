@@ -19,9 +19,28 @@ diesel::table! {
     }
 }
 
+diesel::table! {
+    video (id) {
+        id -> Int4,
+        library_path_id -> Int4,
+        title -> Varchar,
+        file_name -> Varchar,
+        height -> Int4,
+        width -> Int4,
+        runtime -> Int8,
+        size -> Int8,
+        added -> Timestamp,
+        deleted -> Bool,
+        created -> Timestamp,
+        modified -> Timestamp,
+    }
+}
+
 diesel::joinable!(library_path -> library (library_id));
+diesel::joinable!(video -> library_path (library_path_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     library,
     library_path,
+    video,
 );
