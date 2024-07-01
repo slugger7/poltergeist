@@ -26,3 +26,18 @@ pub fn create_library(conn: &mut PgConnection, name: &str) -> Library {
         .get_result(conn)
         .expect("Error saving new library")
 }
+
+pub fn show_libraries(conn: &mut PgConnection) {
+    use self::schema::library::dsl::*;
+
+    let results = library
+        .limit(5)
+        .select(Library::as_select())
+        .load(conn)
+        .expect("Error loading libraries");
+
+    println!("Displaying {} libraries", results.len());
+    for lib in results {
+        println!("{}", lib.name);
+    }
+}

@@ -14,9 +14,3 @@ fn main() {
     let library = create_library(connection, name);
     println!("\nSaved library {} with id {}", name, library.id);
 }
-
-#[cfg(not(windows))]
-const EOF: &str = "CTRL+D";
-
-#[cfg(windows)]
-const EOF: &str = "CTRL+Z";
