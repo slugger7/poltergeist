@@ -1,7 +1,7 @@
 pub mod models;
 pub mod schema;
 
-use self::models::library::{Library, NewLibrary};
+use self::models::library::{LibraryEntity, NewLibrary};
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
@@ -15,14 +15,14 @@ pub fn establish_connection() -> PgConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
-pub fn create_library(conn: &mut PgConnection, name: &str) -> Library {
+pub fn create_library(conn: &mut PgConnection, name: &str) -> LibraryEntity {
     use crate::schema::library;
 
     let new_library = NewLibrary { name };
 
     diesel::insert_into(library::table)
         .values(&new_library)
-        .returning(Library::as_returning())
+        .returning(LibraryEntity::as_returning())
         .get_result(conn)
         .expect("Error saving new library")
 }
@@ -32,7 +32,7 @@ pub fn show_libraries(conn: &mut PgConnection) {
 
     let results = library
         .limit(5)
-        .select(Library::as_select())
+        .select(LibraryEntity::as_select())
         .load(conn)
         .expect("Error loading libraries");
 

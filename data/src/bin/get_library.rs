@@ -1,4 +1,4 @@
-use self::models::library::Library;
+use self::models::library::LibraryEntity;
 use data::*;
 use diesel::prelude::*;
 use std::env::args;
@@ -17,7 +17,7 @@ fn main() {
 
     let lib = library
         .find(library_id)
-        .select(Library::as_select())
+        .select(LibraryEntity::as_select())
         .first(connection)
         .optional(); // This allows for returning an Option<Library>, otherwise it will throw an error
 
