@@ -20,3 +20,15 @@ pub struct VideoEntity {
     pub created: SystemTime,
     pub modified: SystemTime,
 }
+
+#[derive(Insertable)]
+#[diesel(table_name = video)]
+pub struct NewVideo<'a> {
+    pub library_path_id: &'a i32,
+    pub title: &'a str,
+    pub file_name: &'a str,
+    pub height: &'a i32,
+    pub width: &'a i32,
+    pub runtime: &'a i64,
+    pub size: &'a i64,
+}

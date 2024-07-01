@@ -44,3 +44,24 @@ pub fn create_library_path(
             .expect("Error saving new library path"),
     )
 }
+
+pub fn get_library_path_entity_by_id(
+    conn: &mut PgConnection,
+    lib_path_id: i32,
+) -> Option<LibraryPathEntity> {
+    use crate::schema::library_path::dsl::*;
+
+    let result = library_path
+        .find(lib_path_id)
+        .select(LibraryPathEntity::as_select())
+        .first(conn)
+        .optional();
+
+    match result {
+        Ok(lib_path) => Some(lib_path?),
+        Err(error) => {
+            eprintln!("Error encountered getting library path by id: {}", error);
+            None
+        }
+    }
+}
