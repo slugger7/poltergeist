@@ -1,7 +1,7 @@
 pub mod models;
 pub mod schema;
 
-use self::models::{Library, NewLibrary};
+use self::models::library::{Library, NewLibrary};
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;

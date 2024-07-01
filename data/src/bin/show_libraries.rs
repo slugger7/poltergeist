@@ -1,4 +1,4 @@
-use data::models::*;
+use data::models::library::*;
 use data::*;
 use diesel::prelude::*;
 

@@ -1,4 +1,4 @@
-use self::models::Library;
+use self::models::library::Library;
 use data::*;
 use diesel::prelude::*;
 use std::env::args;
