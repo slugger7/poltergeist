@@ -2,7 +2,7 @@ use crate::schema::library;
 use diesel::prelude::*;
 use std::time::SystemTime;
 
-#[derive(Queryable, Selectable)]
+#[derive(Queryable, Selectable, Identifiable)]
 #[diesel(table_name = library)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct LibraryEntity {
