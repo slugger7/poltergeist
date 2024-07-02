@@ -57,3 +57,52 @@ pub fn get_files_by_extensions_recursive(path: &str, extensions: &Vec<&str>) -> 
 
     return files;
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    fn test_data_path() -> String {
+        "./src/test_data".to_string()
+    }
+
+    #[test]
+    fn list_all_directories() {
+        let mut dirs: Vec<String> = get_directories(&test_data_path())
+            .into_iter()
+            .map(|dir| dir.file_name().into_string().unwrap())
+            .collect();
+
+        dirs.sort();
+
+        assert_eq!(2, dirs.len());
+        assert_eq!("folder_1", dirs[0]);
+        assert_eq!("folder_2", dirs[1]);
+    }
+
+    #[test]
+    fn list_files_of_extension_rs() {
+        let files: Vec<String> = get_files_by_extension(&test_data_path(), &vec!["rs"])
+            .into_iter()
+            .map(|dir| dir.file_name().into_string().unwrap())
+            .collect();
+
+        assert_eq!(1, files.len());
+        assert_eq!("root_file.rs", files[0]);
+    }
+
+    #[test]
+    fn list_files_recursively_by_extension() {
+        let mut files: Vec<String> =
+            get_files_by_extensions_recursive(&test_data_path(), &vec!["rs", "json"])
+                .into_iter()
+                .map(|dir| dir.file_name().into_string().unwrap())
+                .collect();
+
+        files.sort();
+
+        assert_eq!(2, files.len());
+        assert_eq!("folder_2_file.json", files[0]);
+        assert_eq!("root_file.rs", files[1]);
+    }
+}
