@@ -9,7 +9,7 @@ fn main() {
     let connection = &mut establish_connection();
     let results = library
         .limit(5)
-        .select(LibraryEntity::as_select())
+        .select(Library::as_select())
         .load(connection)
         .expect("Error loading libraries");
 

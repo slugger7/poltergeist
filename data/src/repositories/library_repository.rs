@@ -1,16 +1,16 @@
-use crate::models::library::{LibraryEntity, NewLibrary};
+use crate::models::library::{Library, NewLibrary};
 use crate::schema::library::dsl::*;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 
-pub fn create_library(conn: &mut PgConnection, new_name: &str) -> LibraryEntity {
+pub fn create_library(conn: &mut PgConnection, new_name: &str) -> Library {
     use crate::schema::library;
 
     let new_library = NewLibrary { name: new_name };
 
     diesel::insert_into(library::table)
         .values(&new_library)
-        .returning(LibraryEntity::as_returning())
+        .returning(Library::as_returning())
         .get_result(conn)
         .expect("Error saving new library")
 }
@@ -18,7 +18,7 @@ pub fn create_library(conn: &mut PgConnection, new_name: &str) -> LibraryEntity 
 pub fn show_libraries(conn: &mut PgConnection) {
     let results = library
         .limit(5)
-        .select(LibraryEntity::as_select())
+        .select(Library::as_select())
         .load(conn)
         .expect("Error loading libraries");
 
@@ -28,10 +28,10 @@ pub fn show_libraries(conn: &mut PgConnection) {
     }
 }
 
-pub fn get_library_entity_by_id(conn: &mut PgConnection, lib_id: i32) -> Option<LibraryEntity> {
+pub fn get_library_entity_by_id(conn: &mut PgConnection, lib_id: i32) -> Option<Library> {
     let result = library
         .find(lib_id)
-        .select(LibraryEntity::as_select())
+        .select(Library::as_select())
         .first(conn)
         .optional();
 

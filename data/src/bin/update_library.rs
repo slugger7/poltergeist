@@ -1,4 +1,4 @@
-use self::models::library::LibraryEntity;
+use self::models::library::Library;
 use data::*;
 use diesel::prelude::*;
 use std::env::args;
@@ -24,7 +24,7 @@ fn main() {
 
     let lib = diesel::update(library.find(id))
         .set(name.eq(new_name))
-        .returning(LibraryEntity::as_returning())
+        .returning(Library::as_returning())
         .get_result(connection)
         .unwrap();
     println!("Library update to {}", lib.name);

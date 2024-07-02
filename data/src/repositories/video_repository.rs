@@ -1,7 +1,8 @@
 use diesel::prelude::*;
 use diesel::{PgConnection, SelectableHelper};
 
-use crate::models::video::{NewVideo, VideoEntity};
+use crate::models::library_path::LibraryPath;
+use crate::models::video::{NewVideo, Video};
 use crate::repositories::library_path_repository::get_library_path_entity_by_id;
 
 pub fn show_videos(conn: &mut PgConnection) {
@@ -9,7 +10,7 @@ pub fn show_videos(conn: &mut PgConnection) {
 
     let results = video
         .limit(5)
-        .select(VideoEntity::as_select())
+        .select(Video::as_select())
         .load(conn)
         .expect("Error loading videos");
     println!("Displaying {} videos", results.len());
@@ -28,7 +29,7 @@ pub fn create_video(
     width: &i32,
     runtime: &i64,
     size: &i64,
-) -> Option<VideoEntity> {
+) -> Option<Video> {
     use crate::schema::video;
 
     match get_library_path_entity_by_id(conn, *library_path_id) {
@@ -52,8 +53,21 @@ pub fn create_video(
     Some(
         diesel::insert_into(video::table)
             .values(&new_video)
-            .returning(VideoEntity::as_returning())
+            .returning(Video::as_returning())
             .get_result(conn)
             .expect("Error saving now video"),
     )
+}
+
+pub fn get_videos_in_library_path(conn: &mut PgConnection, lib_path: LibraryPath) -> Vec<Video> {
+    let result = Video::belonging_to(&lib_path)
+        .select(Video::as_select())
+        .load(conn);
+
+    match result {
+        Ok(videos) => videos,
+        Err(_) => {
+            vec![]
+        }
+    }
 }

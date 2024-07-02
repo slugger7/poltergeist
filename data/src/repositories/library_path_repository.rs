@@ -1,4 +1,4 @@
-use crate::models::library_path::{LibraryPathEntity, NewLibraryPath};
+use crate::models::library_path::{LibraryPath, NewLibraryPath};
 use crate::repositories::library_repository::get_library_entity_by_id;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
@@ -8,7 +8,7 @@ pub fn show_library_paths(conn: &mut PgConnection) {
 
     let results = library_path
         .limit(5)
-        .select(LibraryPathEntity::as_select())
+        .select(LibraryPath::as_select())
         .load(conn)
         .expect("Error loading library paths");
 
@@ -23,7 +23,7 @@ pub fn create_library_path(
     conn: &mut PgConnection,
     path: &str,
     library_id: &i32,
-) -> Option<LibraryPathEntity> {
+) -> Option<LibraryPath> {
     use crate::schema::library_path;
 
     match get_library_entity_by_id(conn, *library_id) {
@@ -39,7 +39,7 @@ pub fn create_library_path(
     Some(
         diesel::insert_into(library_path::table)
             .values(&new_library_path)
-            .returning(LibraryPathEntity::as_returning())
+            .returning(LibraryPath::as_returning())
             .get_result(conn)
             .expect("Error saving new library path"),
     )
@@ -48,12 +48,12 @@ pub fn create_library_path(
 pub fn get_library_path_entity_by_id(
     conn: &mut PgConnection,
     lib_path_id: i32,
-) -> Option<LibraryPathEntity> {
+) -> Option<LibraryPath> {
     use crate::schema::library_path::dsl::*;
 
     let result = library_path
         .find(lib_path_id)
-        .select(LibraryPathEntity::as_select())
+        .select(LibraryPath::as_select())
         .first(conn)
         .optional();
 
