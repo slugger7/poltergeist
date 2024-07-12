@@ -10,12 +10,14 @@ use std::time::SystemTime;
 pub struct Video {
     pub id: i32,
     pub library_path_id: i32,
+    pub relative_path: String,
     pub title: String,
     pub file_name: String,
     pub height: i32,
     pub width: i32,
     pub runtime: i64,
     pub size: i64,
+    pub checksum: Option<String>,
     pub added: SystemTime,
     pub deleted: bool,
     pub created: SystemTime,
@@ -26,10 +28,12 @@ pub struct Video {
 #[diesel(table_name = video)]
 pub struct NewVideo<'a> {
     pub library_path_id: &'a i32,
-    pub title: &'a str,
-    pub file_name: &'a str,
+    pub relative_path: String,
+    pub title: String,
+    pub file_name: String,
     pub height: &'a i32,
     pub width: &'a i32,
     pub runtime: &'a i64,
     pub size: &'a i64,
+    pub checksum: Option<String>,
 }

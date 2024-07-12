@@ -23,12 +23,15 @@ diesel::table! {
     video (id) {
         id -> Int4,
         library_path_id -> Int4,
+        relative_path -> Varchar,
         title -> Varchar,
         file_name -> Varchar,
         height -> Int4,
         width -> Int4,
         runtime -> Int8,
         size -> Int8,
+        #[max_length = 32]
+        checksum -> Nullable<Bpchar>,
         added -> Timestamp,
         deleted -> Bool,
         created -> Timestamp,

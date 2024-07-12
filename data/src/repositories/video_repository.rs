@@ -20,11 +20,20 @@ pub fn show_videos(conn: &mut PgConnection) {
     }
 }
 
+pub fn create_videos(conn: &mut PgConnection, videos: &Vec<NewVideo>) -> Vec<Video> {
+    use crate::schema::video;
+
+    diesel::insert_into(video::table)
+        .values(videos)
+        .get_results(conn)
+        .expect("Error saving videos")
+}
+
 pub fn create_video(
     conn: &mut PgConnection,
     library_path_id: &i32,
-    title: &str,
-    file_name: &str,
+    title: String,
+    file_name: String,
     height: &i32,
     width: &i32,
     runtime: &i64,
@@ -42,12 +51,14 @@ pub fn create_video(
 
     let new_video = NewVideo {
         library_path_id,
+        relative_path: String::new(),
         title,
         file_name,
         height,
         width,
         runtime,
         size,
+        checksum: Some(String::from("01234567890123456789012345678901")),
     };
 
     Some(
@@ -55,7 +66,7 @@ pub fn create_video(
             .values(&new_video)
             .returning(Video::as_returning())
             .get_result(conn)
-            .expect("Error saving now video"),
+            .expect("Error saving new video"),
     )
 }
 
