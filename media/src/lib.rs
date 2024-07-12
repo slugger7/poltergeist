@@ -33,7 +33,7 @@ pub fn get_files_by_extension(path: &str, extensions: &Vec<&str>) -> Vec<DirEntr
                 &file
                     .path()
                     .extension()
-                    .unwrap_or(OsStr::new("s"))
+                    .unwrap_or(OsStr::new(""))
                     .to_str()
                     .unwrap(),
             )
@@ -58,12 +58,46 @@ pub fn get_files_by_extensions_recursive(path: &str, extensions: &Vec<&str>) -> 
     return files;
 }
 
+pub fn create_relative_path(base_path: String, absolute_path: String) -> Result<String, String> {
+    if !absolute_path.contains(&base_path) {
+        return Err(String::from("Base path was not found in absolute path"));
+    }
+
+    let relative_path = absolute_path.replace(base_path.as_str(), "");
+
+    Ok(relative_path[1..].to_string())
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     fn test_data_path() -> String {
         "./src/test_data".to_string()
+    }
+
+    #[test]
+    fn create_relative_path_test() {
+        let base_path = String::from("/root/sub");
+        let absolute_path = String::from("/root/sub/sub_sub/filename");
+
+        if let Ok(relative_path) = create_relative_path(base_path, absolute_path) {
+            assert_eq!("sub_sub/filename", relative_path);
+        } else {
+            assert!(false, "an error was thrown when it was not expected")
+        }
+    }
+
+    #[test]
+    fn create_relative_path_base_path_not_in_absolute_path() {
+        let base_path = String::from("/root/sub");
+        let absolute_path = String::from("/something/else/filename");
+
+        if let Err(message) = create_relative_path(base_path, absolute_path) {
+            assert_eq!("Base path was not found in absolute path", message);
+        } else {
+            assert!(false, "no error was thrown when we were expecting it")
+        }
     }
 
     #[test]
