@@ -5,4 +5,5 @@ edition = "2021"
 
 [dependencies]
 data = { path = "../data" }
+media = { path = "../media" }
 dotenvy = "0.15.7"
