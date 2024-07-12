@@ -1,12 +1,10 @@
-use std::fs::DirEntry;
-
 use data::{
     establish_connection,
     models::video::NewVideo,
     repositories::{
         library_path_repository::{create_library_path, get_library_path_entity_by_id},
         library_repository::create_library,
-        video_repository::{create_video, create_videos, get_videos_in_library_path, show_videos},
+        video_repository::create_videos,
     },
 };
 use media::{create_relative_path, get_files_by_extensions_recursive};
@@ -14,7 +12,7 @@ use media::{create_relative_path, get_files_by_extensions_recursive};
 fn main() {
     let conn = &mut establish_connection();
     let lib = create_library(conn, "Default");
-    create_library_path(conn, "/media/sam/My Videos", &lib.id);
+    create_library_path(conn, "", &lib.id);
 
     if let Some(lib_path) = get_library_path_entity_by_id(conn, 1) {
         println!("Fetching videos from disc");
@@ -59,6 +57,8 @@ fn main() {
                 Err(_) => println!("Could not turn file name into a string"),
             }
         }
+
+        println!("New video entities created");
 
         create_videos(conn, &new_videos);
     }

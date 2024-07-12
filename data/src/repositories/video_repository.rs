@@ -23,10 +23,18 @@ pub fn show_videos(conn: &mut PgConnection) {
 pub fn create_videos(conn: &mut PgConnection, videos: &Vec<NewVideo>) -> Vec<Video> {
     use crate::schema::video;
 
-    diesel::insert_into(video::table)
-        .values(videos)
-        .get_results(conn)
-        .expect("Error saving videos")
+    println!("{}", videos.len());
+
+    let mut created_vids: Vec<Video> = Vec::new();
+    for chunk in videos.chunks(5000) {
+        let mut fresh_vids = diesel::insert_into(video::table)
+            .values(chunk)
+            .get_results(conn)
+            .expect("Error saving videos");
+        created_vids.append(&mut fresh_vids)
+    }
+
+    return created_vids;
 }
 
 pub fn create_video(
