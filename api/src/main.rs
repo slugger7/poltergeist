@@ -7,12 +7,15 @@ use data::{
         video_repository::create_videos,
     },
 };
-use media::{create_relative_path, file_name_without_extension, get_files_by_extensions_recursive};
+use media::{
+    extensions::{create_relative_path, file_name_without_extension},
+    get_files_by_extensions_recursive,
+};
 
 fn main() {
     let conn = &mut establish_connection();
-    let lib = create_library(conn, "Default");
-    create_library_path(conn, "", &lib.id);
+    //let lib = create_library(conn, "Default");
+    //create_library_path(conn, "", &lib.id);
 
     if let Some(lib_path) = get_library_path_entity_by_id(conn, 1) {
         println!("Fetching videos from disc");
