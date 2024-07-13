@@ -7,7 +7,7 @@ use data::{
         video_repository::create_videos,
     },
 };
-use media::{create_relative_path, get_files_by_extensions_recursive};
+use media::{create_relative_path, file_name_without_extension, get_files_by_extensions_recursive};
 
 fn main() {
     let conn = &mut establish_connection();
@@ -36,20 +36,17 @@ fn main() {
                     if let Some(absolute_path) = vid.path().to_str() {
                         match create_relative_path(lib_path.path.clone(), absolute_path.to_string())
                         {
-                            Ok(relative_path) => {
-                                let flnm: String = filename;
-                                new_videos.push(NewVideo {
-                                    library_path_id: &lib_path.id,
-                                    relative_path: relative_path,
-                                    file_name: flnm.clone(),
-                                    title: flnm.clone(),
-                                    height: &480,
-                                    width: &480,
-                                    runtime: &480,
-                                    size: &480,
-                                    checksum: None,
-                                })
-                            }
+                            Ok(relative_path) => new_videos.push(NewVideo {
+                                library_path_id: &lib_path.id,
+                                relative_path: relative_path,
+                                file_name: filename.clone(),
+                                title: file_name_without_extension(&filename),
+                                height: &480,
+                                width: &480,
+                                runtime: &480,
+                                size: &480,
+                                checksum: None,
+                            }),
                             Err(err) => print!("{}", err),
                         }
                     }
