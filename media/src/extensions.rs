@@ -1,3 +1,5 @@
+use std::fs::File;
+
 pub fn create_relative_path(base_path: String, absolute_path: String) -> Result<String, String> {
     if !absolute_path.contains(&base_path) {
         return Err(String::from("Base path was not found in absolute path"));
@@ -14,6 +16,15 @@ pub fn file_name_without_extension(file_name: &str) -> String {
     } else {
         file_name.to_string()
     }
+}
+
+pub fn file_size(path: &str) -> u64 {
+    if let Ok(f) = File::open(path) {
+        if let Ok(metadata) = f.metadata() {
+            return metadata.len();
+        }
+    }
+    0
 }
 
 #[cfg(test)]

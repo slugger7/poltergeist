@@ -62,10 +62,10 @@ pub fn create_video(
         relative_path: String::new(),
         title,
         file_name,
-        height,
-        width,
-        runtime,
-        size,
+        height: *height,
+        width: *width,
+        runtime: *runtime,
+        size: *size,
         checksum: Some(String::from("01234567890123456789012345678901")),
     };
 

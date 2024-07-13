@@ -1,8 +1,10 @@
+pub mod extensions;
+pub mod ffmpeg;
+
 use std::{
     ffi::OsStr,
     fs::{read_dir, DirEntry},
 };
-pub mod extensions;
 
 pub fn get_directories(path: &str) -> Vec<DirEntry> {
     let Ok(contents) = read_dir(path) else {

@@ -31,9 +31,9 @@ pub struct NewVideo<'a> {
     pub relative_path: String,
     pub title: String,
     pub file_name: String,
-    pub height: &'a i32,
-    pub width: &'a i32,
-    pub runtime: &'a i64,
-    pub size: &'a i64,
+    pub height: i32,
+    pub width: i32,
+    pub runtime: i64,
+    pub size: i64,
     pub checksum: Option<String>,
 }
