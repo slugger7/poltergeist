@@ -68,12 +68,38 @@ pub fn create_relative_path(base_path: String, absolute_path: String) -> Result<
     Ok(relative_path[1..].to_string())
 }
 
+pub fn file_name_without_extension(file_name: &str) -> String {
+    if let Some(last_index) = file_name.rfind('.') {
+        file_name[..last_index].to_string()
+    } else {
+        file_name.to_string()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     fn test_data_path() -> String {
         "./src/test_data".to_string()
+    }
+
+    #[test]
+    fn file_name_without_extension_with_extension() {
+        let file_name = String::from("something.mp4");
+
+        let title = file_name_without_extension(file_name.as_str());
+
+        assert_eq!("something", title)
+    }
+
+    #[test]
+    fn file_name_without_extension_with_no_extension() {
+        let file_name = String::from("something");
+
+        let title = file_name_without_extension(file_name.as_str());
+
+        assert_eq!(file_name, title)
     }
 
     #[test]
