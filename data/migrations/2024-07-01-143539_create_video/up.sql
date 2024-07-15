@@ -8,7 +8,7 @@ create table video (
   width int not null,
   runtime bigint not null,
   size bigint not null,
-  checksum char(32),
+  checksum char(40),
   added timestamp default current_timestamp not null,
   deleted boolean default false not null,
   created timestamp default current_timestamp not null,

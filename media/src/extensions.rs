@@ -1,6 +1,5 @@
-use std::{fs::File, io::Read};
-
-use openssl::sha;
+use sha1::{Digest, Sha1};
+use std::{fs::File, io};
 
 pub fn create_relative_path(base_path: String, absolute_path: String) -> Result<String, String> {
     if !absolute_path.contains(&base_path) {
@@ -31,20 +30,15 @@ pub fn file_size(path: &str) -> u64 {
 
 pub fn checksum(path: &str) -> String {
     println!("Hashing: {}", path);
-    if let Ok(f) = File::open(path) {
-        let mut hasher = sha::Sha1::new();
-        let bytes = f.bytes();
-        for byte in bytes {
-            match byte {
-                Ok(b) => hasher.update(&[b]),
-                Err(err) => eprintln!("checksum error: {}", err),
-            }
+    if let Ok(mut f) = File::open(path) {
+        let mut hasher = Sha1::new();
+
+        if let Err(err) = io::copy(&mut f, &mut hasher) {
+            eprintln!("Error copying file to hasher: {}", err);
         }
 
-        let hash = hasher.finish();
-
-        println!("Hashing complete: {}", path);
-        return hex::encode(hash);
+        let hash_bytes = hasher.finalize();
+        return hex::encode(hash_bytes);
     }
 
     eprintln!("Something went wrong when hashing {}", path);

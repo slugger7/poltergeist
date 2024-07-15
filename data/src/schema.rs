@@ -30,7 +30,7 @@ diesel::table! {
         width -> Int4,
         runtime -> Int8,
         size -> Int8,
-        #[max_length = 32]
+        #[max_length = 40]
         checksum -> Nullable<Bpchar>,
         added -> Timestamp,
         deleted -> Bool,
