@@ -1,5 +1,5 @@
 pub mod extensions;
-pub mod ffmpeg;
+pub mod ffprobe;
 
 use std::{
     ffi::OsStr,

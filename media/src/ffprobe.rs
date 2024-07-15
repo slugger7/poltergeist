@@ -1,12 +1,6 @@
-use std::{
-    path::Path,
-    process::{Command, Output},
-};
+use std::process::Command;
 
-use ffmpeg_sidecar::{
-    command::FfmpegCommand,
-    ffprobe::{self, ffprobe_path},
-};
+use ffmpeg_sidecar::ffprobe::ffprobe_path;
 
 pub fn init() {
     ffmpeg_sidecar::download::auto_download().unwrap()

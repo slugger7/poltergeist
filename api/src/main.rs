@@ -8,15 +8,15 @@ use data::{
     },
 };
 use media::{
-    extensions::{create_relative_path, file_name_without_extension, file_size},
-    ffmpeg::dimensions_and_duration,
+    extensions::{checksum, create_relative_path, file_name_without_extension, file_size},
+    ffprobe::dimensions_and_duration,
     get_files_by_extensions_recursive,
 };
 
 fn main() {
     let conn = &mut establish_connection();
-    //let lib = create_library(conn, "Default");
-    //create_library_path(conn, "", &lib.id);
+    let lib = create_library(conn, "Default");
+    create_library_path(conn, "", &lib.id);
 
     if let Some(lib_path) = get_library_path_entity_by_id(conn, 1) {
         println!("Fetching videos from disc");
@@ -63,7 +63,7 @@ fn main() {
                                     width: width as i32,
                                     runtime: duration as i64,
                                     size: size,
-                                    checksum: None,
+                                    checksum: Some(checksum(&full_path)),
                                 })
                             }
                             Err(err) => print!("{}", err),
