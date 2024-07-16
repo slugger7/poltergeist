@@ -4,7 +4,9 @@ use data::{
     repositories::{
         library_path_repository::{create_library_path, get_library_path_entity_by_id},
         library_repository::create_library,
-        video_repository::create_videos,
+        video_repository::{
+            add_checksum_to_video_by_id, create_videos, get_videos_without_checksum_limited,
+        },
     },
 };
 use media::{
@@ -15,8 +17,8 @@ use media::{
 
 fn main() {
     let conn = &mut establish_connection();
-    let lib = create_library(conn, "Default");
-    create_library_path(conn, "", &lib.id);
+    // let lib = create_library(conn, "Default");
+    // create_library_path(conn, "", &lib.id);
 
     if let Some(lib_path) = get_library_path_entity_by_id(conn, 1) {
         println!("Fetching videos from disc");
@@ -63,7 +65,7 @@ fn main() {
                                     width: width as i32,
                                     runtime: duration as i64,
                                     size: size,
-                                    checksum: Some(checksum(&full_path)),
+                                    checksum: None,
                                 })
                             }
                             Err(err) => print!("{}", err),
@@ -77,6 +79,26 @@ fn main() {
         println!("New video entities created");
 
         create_videos(conn, &new_videos);
+
+        loop {
+            let checksum_vids = get_videos_without_checksum_limited(conn, 10);
+
+            if checksum_vids.len() == 0 {
+                break;
+            }
+
+            println!("Processing batch");
+            for (vid, lib_path) in checksum_vids {
+                let full_path = [lib_path.path, vid.relative_path].join("/");
+                let calculated_checksum = checksum(full_path.as_str());
+                println!("Updating checksum: {} {}", full_path, calculated_checksum);
+                let result = add_checksum_to_video_by_id(conn, &vid.id, &calculated_checksum);
+
+                if let Err(error) = result {
+                    eprintln!("Something went wrong updating the checksum: {}", error);
+                }
+            }
+        }
     }
     println!("Done");
 }

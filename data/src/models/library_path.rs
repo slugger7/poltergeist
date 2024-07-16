@@ -3,7 +3,7 @@ use crate::schema::library_path;
 use diesel::prelude::*;
 use std::time::SystemTime;
 
-#[derive(Queryable, Selectable, Identifiable, Associations)]
+#[derive(Queryable, Selectable, Identifiable, Associations, PartialEq, Debug)]
 #[diesel(table_name = library_path)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[diesel(belongs_to(Library))]
