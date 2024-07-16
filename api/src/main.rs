@@ -17,8 +17,8 @@ use media::{
 
 fn main() {
     let conn = &mut establish_connection();
-    // let lib = create_library(conn, "Default");
-    // create_library_path(conn, "", &lib.id);
+    let lib = create_library(conn, "Default");
+    create_library_path(conn, "", &lib.id);
 
     if let Some(lib_path) = get_library_path_entity_by_id(conn, 1) {
         println!("Fetching videos from disc");
