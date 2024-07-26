@@ -13,9 +13,20 @@ pub fn get_directories(path: &str) -> Vec<DirEntry> {
     };
 
     let dirs = contents
-        .filter(|dir_ent| dir_ent.is_ok())
-        .map(|dir| dir.unwrap())
-        .filter(|dir| dir.file_type().unwrap().is_dir())
+        .filter_map(|dir_res| dir_res.ok())
+        .filter_map(|dir| match dir.file_type() {
+            Ok(file_type) => {
+                if file_type.is_dir() {
+                    Some(dir)
+                } else {
+                    None
+                }
+            }
+            Err(err) => {
+                eprintln!("Could not get filetype for file/directory {}", err);
+                None
+            }
+        })
         .collect();
 
     return dirs;
