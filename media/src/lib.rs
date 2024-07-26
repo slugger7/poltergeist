@@ -1,10 +1,7 @@
 pub mod extensions;
 pub mod ffprobe;
 
-use std::{
-    ffi::OsStr,
-    fs::{read_dir, DirEntry},
-};
+use std::fs::{read_dir, DirEntry};
 
 pub fn get_directories(path: &str) -> Vec<DirEntry> {
     let Ok(contents) = read_dir(path) else {
@@ -13,17 +10,22 @@ pub fn get_directories(path: &str) -> Vec<DirEntry> {
     };
 
     let dirs = contents
-        .filter_map(|dir_res| dir_res.ok())
-        .filter_map(|dir| match dir.file_type() {
-            Ok(file_type) => {
-                if file_type.is_dir() {
-                    Some(dir)
-                } else {
+        .filter_map(|dir_res| match dir_res {
+            Ok(dir_ent) => match dir_ent.file_type() {
+                Ok(file_type) => {
+                    if file_type.is_dir() {
+                        Some(dir_ent)
+                    } else {
+                        None
+                    }
+                }
+                Err(err) => {
+                    eprintln!("Could not get filetype for file/directory {}", err);
                     None
                 }
-            }
+            },
             Err(err) => {
-                eprintln!("Could not get filetype for file/directory {}", err);
+                eprintln!("Could not read directory entry {}", err);
                 None
             }
         })
@@ -39,18 +41,35 @@ pub fn get_files_by_extension(path: &str, extensions: &Vec<&str>) -> Vec<DirEntr
     };
 
     let files = contents
-        .filter(|dir_ent| dir_ent.is_ok())
-        .map(|file| file.unwrap())
-        .filter(|file| file.file_type().unwrap().is_file())
-        .filter(|file| {
-            extensions.contains(
-                &file
-                    .path()
-                    .extension()
-                    .unwrap_or(OsStr::new(""))
-                    .to_str()
-                    .unwrap(),
-            )
+        .filter_map(|dir_res| match dir_res {
+            Ok(dir_ent) => match dir_ent.file_type() {
+                Ok(file_type) => {
+                    if file_type.is_file() {
+                        Some(dir_ent)
+                    } else {
+                        None
+                    }
+                }
+                Err(err) => {
+                    eprintln!("Could not get the file type {}", err);
+                    None
+                }
+            },
+            Err(err) => {
+                eprintln!("Could not get the directory entry {}", err);
+                None
+            }
+        })
+        .filter_map(|file| {
+            if let Some(ext) = &file.path().extension() {
+                if let Some(ext_str) = ext.to_str() {
+                    if extensions.contains(&ext_str) {
+                        return Some(file);
+                    }
+                }
+            };
+
+            None
         })
         .collect();
 
